@@ -1,68 +1,65 @@
-﻿using Elevator.Domain.Common;
+﻿using SharedKernel;
 
-namespace Elevator.Domain.Elevators;
+namespace Domain.Elevators;
 
-public enum ElevatorStatus { Moving, Stopped, Idle, OutOfService }
-public enum ElevatorDirection { Up, Down, Stationary }
-
-public abstract class Elevator : Entity
+public abstract class Elevator(int id, int maxCapacity, ElevatorType elevatorType)
+    : Entity(id)
 {
-    public int CurrentFloor { get; private set; }
-    public ElevatorStatus ElevatorStatus { get; private set; }
-    public int MaxCapacity { get; private set; }
-    public int PassengerCount { get; private set; }
-    public ElevatorDirection ElevatorDirection { get; private set; }
+    public int MaxCapacity { get; } = maxCapacity;
+    public ElevatorType ElevatorType { get; } = elevatorType;
+    public int CurrentFloor { get; private set; } = 1;
+    public int PassengerCount { get; private set; } = 0;
+    public ElevatorStatus ElevatorStatus { get; private set; } = ElevatorStatus.Idle;
+    public ElevatorDirection ElevatorDirection { get; private set; } = ElevatorDirection.Stationary;
 
-    protected Elevator(Guid id, int numberOfFloors, int maxCapacity)
-        : base(id)
+    public async Task MoveToFloorAsync(int targetFloor, Action<string> statusCallback)
     {
-        Reset();
-
-        MaxCapacity = maxCapacity;
-    }
-    public void MoveToFloor(int targetFloor)
-    {
-        if (targetFloor <= 0)
+        if (Invalid(targetFloor))
         {
             throw new ArgumentOutOfRangeException(nameof(targetFloor), "Target floor must be greater than or equal to 1.");
         }
 
-        if (targetFloor == CurrentFloor)
+        if (AlreadyOn(targetFloor))
         {
-            Console.WriteLine($"Elevator {Id} is already on floor {CurrentFloor}.");
+            statusCallback($"Elevator [{Id}] is already on Floor [{CurrentFloor}].");
             return;
         }
 
-        SetDirection(targetFloor);
-        ElevatorStatus = ElevatorStatus.Moving;
-
-        Console.WriteLine($"Elevator {Id} is moving {ElevatorDirection} from Floor {CurrentFloor} to Floor {targetFloor}.");
+        await ElevatorMovementBetweenFloors(targetFloor, statusCallback);
     }
 
-    public virtual void SetDirection(int targetFloor)
+    public void LoadPassengers(int passengers)
     {
-        if (targetFloor > CurrentFloor)
-        {
-            ElevatorDirection = ElevatorDirection.Up;
-        }
-        else if (targetFloor < CurrentFloor)
-        {
-            ElevatorDirection = ElevatorDirection.Down;
-        }
-        else
-        {
-            ElevatorDirection = ElevatorDirection.Stationary;
-            ElevatorStatus = ElevatorStatus.Idle;
-        }
+        if (passengers < 0 || !CanLoadPassengers(passengers))
+            throw new InvalidOperationException("Invalid passengers count. Passengers cannot be negative or exceed maximum capacity.");
+
+        PassengerCount += passengers;
     }
 
-    #region Helpers
-    private void Reset()
+    public bool CanLoadPassengers(int passengers) => (PassengerCount + passengers) <= MaxCapacity;
+    public void UnloadPassengers(int passengers) => PassengerCount = Math.Max(0, PassengerCount - passengers);
+
+    #region Private Methods
+    private static bool Invalid(int targetFloor) => targetFloor <= 0;
+    private bool NotOn(int targetFloor) => CurrentFloor != targetFloor;
+    private bool AlreadyOn(int targetFloor) => targetFloor == CurrentFloor;
+    private void SetElevatorDirection(int targetFloor)
+        => ElevatorDirection = targetFloor > CurrentFloor ? ElevatorDirection.Up : ElevatorDirection.Down;
+
+    private async Task ElevatorMovementBetweenFloors(int targetFloor, Action<string> statusCallback)
     {
-        CurrentFloor = 0;
-        ElevatorStatus = ElevatorStatus.Idle;
-        PassengerCount = 0;
+        SetElevatorDirection(targetFloor);
+
+        while (NotOn(targetFloor))
+        {
+            CurrentFloor += targetFloor > CurrentFloor ? 1 : -1;
+            statusCallback?.Invoke($"Elevator [{Id}] is on floor [{CurrentFloor}] moving {ElevatorDirection}.");
+            await Task.Delay(5000);
+        }
+
         ElevatorDirection = ElevatorDirection.Stationary;
-    }      
+        ElevatorStatus = ElevatorStatus.Stopped;
+        statusCallback?.Invoke($"Elevator [{Id}] has reached Floor [{targetFloor}] and is now stationary.");
+    }
     #endregion
 }
