@@ -12,10 +12,7 @@ public sealed class Building : Entity
 
     public Building(int numberOfFloors, List<(ElevatorType Type, int MaxCapacity)> elevatorConfigurations, IElevatorFactory elevatorFactory)
     {
-        if (elevatorFactory == null)
-        {
-            throw new ArgumentNullException(nameof(elevatorFactory));
-        }
+        ArgumentNullException.ThrowIfNull(elevatorFactory);
 
         Floors = Enumerable
             .Range(1, numberOfFloors)

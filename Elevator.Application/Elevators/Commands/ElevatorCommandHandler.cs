@@ -26,7 +26,7 @@ internal sealed class ElevatorCommandHandler(Building building, IDispatchStrateg
 
             await elevator.MoveToFloorAsync(request.TargetFloor, status =>
             {
-                Console.WriteLine($"[Real-Time Update]: {status}");
+                Console.WriteLine($"[Movement - Update] : {status}");
             });
 
             elevator.UnloadPassengers(request.PassengersWaiting);

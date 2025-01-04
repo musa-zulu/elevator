@@ -38,10 +38,11 @@ while (true)
 
 static void DisplayElevatorStatus(Building building)
 {
+    Console.WriteLine("\nThis building has [" + building.Elevators.Count + "] elevators. and [" + building.Floors.Count + "] floors.");
     Console.WriteLine("\nCurrent Elevator Status:");
     foreach (var elevator in building.Elevators)
     {
-        Console.WriteLine($"Elevator {elevator.Id} ({elevator.ElevatorType}) [MaxCapacity: {elevator.MaxCapacity}]- Floor: {elevator.CurrentFloor}, Passengers: {elevator.PassengerCount}, Status: {(elevator.ElevatorStatus == Domain.Elevators.ElevatorStatus.Moving ? "Moving" : "Stationary")}.");
+        Console.WriteLine($"Elevator {elevator.Id} [{elevator.ElevatorType}] [MaxCapacity: {elevator.MaxCapacity}] - Floor: {elevator.CurrentFloor}, Passengers: {elevator.PassengerCount}, Status: {(elevator.ElevatorStatus == Domain.Elevators.ElevatorStatus.Moving ? "Moving" : "Stationary")}.");
     }
     Console.WriteLine();
 }
