@@ -48,6 +48,8 @@ public class ElevatorCommandHandlerTests
         var targetFloor = 5;
         var passengersWaiting = 3;
         var floor = new Floor(targetFloor);
+
+        _mockBuilding.GetFloor(targetFloor).Returns(floor);
         // Act
         var result = await _handler.Handle(new ElevatorCommand(targetFloor, passengersWaiting), CancellationToken.None);
 
