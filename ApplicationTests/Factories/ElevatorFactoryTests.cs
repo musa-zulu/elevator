@@ -1,6 +1,5 @@
 ﻿using Application.Factories;
 using Domain.Elevators;
-using System;
 using Xunit;
 
 namespace ApplicationTests.Factories;

@@ -36,7 +36,17 @@ public abstract class Elevator(int id, int maxCapacity, ElevatorType elevatorTyp
         PassengerCount += passengers;
     }
 
-    public bool CanLoadPassengers(int passengers) => (PassengerCount + passengers) <= MaxCapacity;
+    public bool CanLoadPassengers(int passengers)
+    {
+        if (passengers <= 0)
+            throw new InvalidOperationException("Invalid passengers count. Passengers cannot be negative.");
+
+        if (passengers > MaxCapacity)
+            throw new InvalidOperationException("Invalid passengers count. Passengers cannot exceed maximum capacity.");
+
+        return (PassengerCount + passengers) <= MaxCapacity;
+    }
+
     public void UnloadPassengers(int passengers) => PassengerCount = Math.Max(0, PassengerCount - passengers);
 
     #region Private Methods
