@@ -20,7 +20,7 @@ internal sealed class ElevatorCommandHandler(Building building, IDispatchStrateg
             var elevator = await dispatchStrategy.SelectElevatorAsync(building.Elevators, request.TargetFloor, request.PassengersWaiting);
 
             if (elevator == null)
-                return Result.Failure(ElevatorErrors.NotAvailable());
+                return Result.Failure(ElevatorErrors.SomethingWentWrong($"No elevator found for floor {request.TargetFloor} with {request.PassengersWaiting} passengers"));
 
             elevator.LoadPassengers(request.PassengersWaiting);
 

@@ -94,7 +94,7 @@ public class ElevatorCommandHandlerTests
 
         // Assert
         Assert.False(result.IsSuccess);
-        Assert.Equal(ElevatorErrors.NotAvailable().Description, result.Error.Description);
+        Assert.Equal(ElevatorErrors.SomethingWentWrong($"No elevator found for floor {targetFloor} with {passengersWaiting} passengers").Description, result.Error.Description);
     }
 
     [Fact]

@@ -7,8 +7,8 @@ public abstract class Elevator(int id, int maxCapacity, ElevatorType elevatorTyp
 {
     public int MaxCapacity { get; } = maxCapacity;
     public ElevatorType ElevatorType { get; } = elevatorType;
-    public int CurrentFloor { get; private set; } = 1;
-    public int PassengerCount { get; private set; } = 0;
+    public int CurrentFloor { get; set; } = 1;
+    public int PassengerCount { get; set; } = 0;
     public ElevatorStatus ElevatorStatus { get; private set; } = ElevatorStatus.Idle;
     public ElevatorDirection ElevatorDirection { get; private set; } = ElevatorDirection.Stationary;
 
@@ -40,9 +40,6 @@ public abstract class Elevator(int id, int maxCapacity, ElevatorType elevatorTyp
     {
         if (passengers <= 0)
             throw new InvalidOperationException("Invalid passengers count. Passengers cannot be negative.");
-
-        if (passengers > MaxCapacity)
-            throw new InvalidOperationException("Invalid passengers count. Passengers cannot exceed maximum capacity.");
 
         return (PassengerCount + passengers) <= MaxCapacity;
     }
