@@ -5,7 +5,7 @@ using SharedKernel;
 
 namespace Domain.Buildings;
 
-public sealed class Building : Entity
+public class Building : Entity
 {
     public List<Elevator> Elevators { get; }
     public List<Floor> Floors { get; }
@@ -24,7 +24,7 @@ public sealed class Building : Entity
         ).ToList();
     }
 
-    public Floor GetFloor(int floorNumber) =>
+    public virtual Floor GetFloor(int floorNumber) =>
         Floors.Find(f => f.FloorNumber == floorNumber)
         ?? throw new InvalidOperationException($"Floor {floorNumber} does not exist.");
 }

@@ -1,6 +1,6 @@
 ﻿namespace Domain.Floors;
 
-public sealed class Floor(int floorNumber)
+public class Floor(int floorNumber)
 {
     public int PassengerCount { get; private set; } = 0;
     public int FloorNumber { get; } = floorNumber;

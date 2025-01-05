@@ -54,7 +54,7 @@ public abstract class Elevator(int id, int maxCapacity, ElevatorType elevatorTyp
         {
             CurrentFloor += targetFloor > CurrentFloor ? 1 : -1;
             statusCallback?.Invoke($"Elevator [{Id}] is on floor [{CurrentFloor}] moving {ElevatorDirection}.");
-            await Task.Delay(3000);
+            await Task.Delay(1000);
         }
 
         ElevatorDirection = ElevatorDirection.Stationary;
